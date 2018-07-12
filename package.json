@@ -1,0 +1,25 @@
+{
+  "name": "memderz-server",
+  "version": "1.0.0",
+  "description": "server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schu34/memderz-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schu34/memderz-server/issues"
+  },
+  "homepage": "https://github.com/schu34/memderz-server#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "mongo-utility": "^0.1.13",
+    "uuid": "^3.3.2"
+  }
+}
