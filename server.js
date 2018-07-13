@@ -2,11 +2,12 @@ const express = require("express");
 const app = express();
 const uuid = require("uuid/v4");
 const db = require("mongo-utility")("mongodb://theBestTeam:password1@ds133601.mlab.com:33601/tinder-meme")
-
+const cors = require("cors")
 app.use(express.json({
   extended: false
 }));
 
+app.use(cors())
 app.use("/images", express.static(__dirname + "/images"));
 
 app.get("/profile/:id", (req, res) => {

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/schu34/memderz-server#readme",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.16.3",
     "mongo-utility": "^0.1.13",
     "uuid": "^3.3.2"
