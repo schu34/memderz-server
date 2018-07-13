@@ -210,7 +210,11 @@ function createChat(user1, user2) {
     chat_id: uuid(),
     user1,
     user2,
-    messages: [],
+    messages: [{
+      text:"welcome to chat",
+      sender: "me",
+      timestamp: new Date(),
+    }],
   }
   return db.insert("chats", newChat)
     .then(() => newChat);
