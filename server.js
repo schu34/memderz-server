@@ -3,6 +3,7 @@ const app = express();
 const uuid = require("uuid/v4");
 const db = require("mongo-utility")("mongodb://theBestTeam:password1@ds133601.mlab.com:33601/tinder-meme")
 const cors = require("cors")
+const fs = require("fs");
 app.use(express.json({
   extended: false
 }));
@@ -63,7 +64,9 @@ app.get("/login/:userName", (req, res) => {
         res.sendStatus(404);
       } else {
         console.log(users);
-        res.send({user:users[0]});
+        res.send({
+          user: users[0]
+        });
       }
     })
     .catch(err => handleErrors(err, res))
@@ -151,6 +154,16 @@ app.get("/matches/:userId", (req, res) => {
     .catch(err => handleErrors(err, res));
 })
 
+app.get("/meme", (req, res) => {
+  db.findMany("images", {})
+    .then(images=>{
+      res.send(getRandom(images))
+    })
+})
+
+function getRandom(array) {
+  return array[Math.floor(Math.random() * array.length)]
+}
 app.get("/chat/:user1/:user2", (req, res) => {
   return findChat(req.params.user1, req.params.user2)
     .then(chat => {
@@ -211,7 +224,7 @@ function createChat(user1, user2) {
     user1,
     user2,
     messages: [{
-      text:"welcome to chat",
+      text: "welcome to chat",
       sender: "me",
       timestamp: new Date(),
     }],
@@ -223,7 +236,7 @@ function createChat(user1, user2) {
 function handleErrors(err, res) {
   console.log(err);
   if (err === "break") res.sendStatus(200);
-  else if (err.code && err.message){
+  else if (err.code && err.message) {
     res.status(err.code).json(err.message);
   } else if (err.code) {
     res.sendStatus(err.code);
