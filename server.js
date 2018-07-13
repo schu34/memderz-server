@@ -7,6 +7,8 @@ app.use(express.json({
   extended: false
 }));
 
+app.use("/images", express.static(__dirname + "/images"));
+
 app.get("/profile/:id", (req, res) => {
   db.findMany("users", {
       user_id: req.params.id
@@ -42,7 +44,7 @@ app.get("/swipe/:user/:id/:score", (req, res) => {
     id,
     score
   } = req.params;
-  const score = parseInt(score);
+  const scoreInt = parseInt(score);
 
   db
     .insert("likes", {
@@ -61,7 +63,7 @@ app.get("/swipe/:user/:id/:score", (req, res) => {
       });
     })
     .then(user => {
-      user.counts[this.catagory] += score;
+      user.counts[this.catagory] += scoreInt;
       return db.update("users", user);
     })
     .then(() => {
@@ -112,7 +114,7 @@ app.post("/chat", (req, res) => {
     })
 })
 
-findChat(user1, user2) {
+function findChat(user1, user2) {
   return db.findMany("chats", {
     $or: [{
       user1,
@@ -142,5 +144,5 @@ function createChat(user1, user2) {
 }
 
 app.listen(4000, () => {
-  console.log("listeing on port 3000")
+  console.log("listeing on port 4000")
 })
