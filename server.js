@@ -23,6 +23,36 @@ app.get("/profile/:id", (req, res) => {
 
 })
 
+app.get("/signup/:username", (req, res) => {
+  db.findMany("users", {
+      user_name: req.params.username
+    })
+    .then(users => {
+      if (users.length) {
+
+        return Promise.reject({
+          code: 406,
+          message: "username taken"
+        })
+      }
+      console.log(users);
+      return db.insert("users", {
+        "user_id": uuid(),
+        "user_name": req.params.username,
+        "cartoon_count": 0,
+        "people_count": 0,
+        "animal_count": 0,
+        "car_count": 0
+      })
+
+    })
+    .then(() => {
+      console.log("wtf");
+      res.sendStatus(200)
+    })
+    .catch(err => handleErrors(err, res));
+})
+
 app.get("/login/:userName", (req, res) => {
   db.findMany("users", {
       user_name: req.params.userName
@@ -34,6 +64,7 @@ app.get("/login/:userName", (req, res) => {
         res.send(users[0].user_id);
       }
     })
+    .catch(err => handleErrors(err, res))
 })
 
 app.get("/swipe/:user/:id/:score", (req, res) => {
@@ -115,7 +146,7 @@ app.get("/matches/:userId", (req, res) => {
       }
     })
     .then(users => res.json(users))
-    .catch(handleErrors)
+    .catch(err => handleErrors(err, res));
 })
 
 app.get("/chat/:user1/:user2", (req, res) => {
@@ -124,6 +155,8 @@ app.get("/chat/:user1/:user2", (req, res) => {
       console.log(chat)
       return res.json(chat);
     })
+    .catch(err => handleErrors(err, res));
+
 })
 
 app.post("/chat", (req, res) => {
@@ -149,7 +182,7 @@ app.post("/chat", (req, res) => {
     .then(() => {
       res.send(this.chat);
     })
-    .catch(handleErrors)
+    .catch(err => handleErrors(err, res));
 })
 
 function findChat(user1, user2) {
@@ -184,8 +217,10 @@ function createChat(user1, user2) {
 function handleErrors(err, res) {
   console.log(err);
   if (err === "break") res.sendStatus(200);
-  else if (err.code) {
-    res.sendStatus(code);
+  else if (err.code && err.message){
+    res.status(err.code).json(err.message);
+  } else if (err.code) {
+    res.sendStatus(err.code);
   }
 }
 
