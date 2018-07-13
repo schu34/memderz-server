@@ -121,6 +121,7 @@ app.get("/matches/:userId", (req, res) => {
 app.get("/chat/:user1/:user2", (req, res) => {
   return findChat(req.params.user1, req.params.user2)
     .then(chat => {
+      console.log(chat)
       return res.json(chat);
     })
 })
@@ -142,11 +143,13 @@ app.post("/chat", (req, res) => {
         sender,
         timestamp: new Date(),
       })
+      this.chat = chat
       return db.update("chats", chat)
     })
     .then(() => {
-      res.send(chat);
+      res.send(this.chat);
     })
+    .catch(handleErrors)
 })
 
 function findChat(user1, user2) {
@@ -174,7 +177,7 @@ function createChat(user1, user2) {
     user2,
     messages: [],
   }
-  db.insert("chats", newChat)
+  return db.insert("chats", newChat)
     .then(() => newChat);
 }
 
