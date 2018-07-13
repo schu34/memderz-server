@@ -43,31 +43,55 @@ app.get("/swipe/:user/:id/:score", (req, res) => {
     id,
     score
   } = req.params;
+  console.log(user, id, score)
 
   const scoreInt = parseInt(score);
 
   db
-    .insert("likes", {
+    .findMany("likes", {
       user_id: user,
       image_id: id
     })
+    .then(likes => {
+      if (likes.length) {
+        res.sendStatus(200)
+        return Promise.reject("break");
+      }
+      db.insert("likes", {
+        user_id: user,
+        image_id: id
+      })
+    })
     .then(() => {
       return db.findMany("images", {
-        image_id: id
+        id: id
       });
     })
-    .then(image => {
+    .then(images => {
+      const image = images[0]
       this.catagory = image.catagory;
+      console.log(image)
       return db.findMany("users", {
         user_id: user
       });
     })
-    .then(user => {
-      user.counts[this.catagory] += scoreInt;
+    .then(users => {
+
+      const user = users[0]
+
+      console.log(user);
+      const key = this.catagory + "_count"
+      user[key] += scoreInt;
+      console.log(user)
       return db.update("users", user);
     })
     .then(() => {
       res.sendStatus(200);
+    })
+    .catch(err => {
+      if (err === "break")
+        return Promise.resolve();
+      else console.log(err)
     })
 })
 
@@ -76,11 +100,16 @@ app.get("/matches/:userId", (req, res) => {
       user_id: req.params.userId
     })
     .then(matches => {
-      if (!matches) return res.sendStatus(404)
+
+      if (!matches) return Promise.reject({
+        code: 404
+      })
+
       else {
-        return matches[0];
+        res.json(matches[0]);
       }
     })
+    .catch(handleErrors)
 })
 
 app.get("/chat/:user1/:user2", (req, res) => {
@@ -141,6 +170,14 @@ function createChat(user1, user2) {
   }
   db.insert("chats", newChat)
     .then(() => newChat);
+}
+
+function handleErrors(err, res) {
+  console.log(err);
+  if (err === "break") res.sendStatus(200);
+  else if (err.code) {
+    res.sendStatus(code);
+  }
 }
 
 app.listen(4000, () => {
