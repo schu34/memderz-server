@@ -63,7 +63,7 @@ app.get("/login/:userName", (req, res) => {
         res.sendStatus(404);
       } else {
         console.log(users);
-        res.send(users[0].user_id);
+        res.send({id:users[0].user_id});
       }
     })
     .catch(err => handleErrors(err, res))
