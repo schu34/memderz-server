@@ -106,9 +106,15 @@ app.get("/matches/:userId", (req, res) => {
       })
 
       else {
+        return Promise.all(matches[0].matches.map(user_id => {
+          return db.findMany("users", {
+            user_id
+          }).then(users => users[0])
+        }))
         res.json(matches[0]);
       }
     })
+    .then(users => res.json(users))
     .catch(handleErrors)
 })
 
@@ -180,6 +186,8 @@ function handleErrors(err, res) {
   }
 }
 
-app.listen(4000, () => {
-  console.log("listeing on port 4000")
+const port = process.env.PORT || 4000
+
+app.listen(port, () => {
+  console.log("listeing on port", port)
 })
