@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const uuid = require("uuid/v4");
-
 const db = require("mongo-utility")("mongodb://theBestTeam:password1@ds133601.mlab.com:33601/tinder-meme")
+
 app.use(express.json({
   extended: false
 }));
@@ -36,7 +36,6 @@ app.get("/login/:userName", (req, res) => {
     })
 })
 
-
 app.get("/swipe/:user/:id/:score", (req, res) => {
 
   const {
@@ -44,6 +43,7 @@ app.get("/swipe/:user/:id/:score", (req, res) => {
     id,
     score
   } = req.params;
+
   const scoreInt = parseInt(score);
 
   db
