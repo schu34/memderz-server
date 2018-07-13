@@ -62,6 +62,7 @@ app.get("/login/:userName", (req, res) => {
       if (!users.length) {
         res.sendStatus(404);
       } else {
+        console.log(users);
         res.send(users[0].user_id);
       }
     })
